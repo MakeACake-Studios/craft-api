@@ -14,6 +14,7 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     implementation(kotlin("reflect"))
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -28,4 +29,7 @@ publishing {
             from(components["java"])
         }
     }
+}
+kotlin {
+    jvmToolchain(8)
 }
