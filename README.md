@@ -27,7 +27,7 @@ repositories {
 2. Add the dependency:
 ```kotlin
 dependencies {
-    implementation("com.github.YourUser:craft-api:Tag")
+    implementation("com.github.MakeACake-Studios:craft-api:1.0.0")
 }
 ```
 
@@ -103,7 +103,7 @@ repositories {
 2. Добавьте зависимость:
 ```kotlin
 dependencies {
-    implementation("com.github.ВашНик:craft-api:Tag")
+    implementation("com.github.MakeACake-Studios:craft-api:1.0.0")
 }
 ```
 
