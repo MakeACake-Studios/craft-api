@@ -103,7 +103,7 @@ repositories {
 2. Добавьте зависимость:
 ```kotlin
 dependencies {
-    implementation("com.github.MakeACake-Studios:craft-api:1.0.0")
+    implementation("com.github.MakeACake-Studios:craft-api:1.0.2")
 }
 ```
 
