@@ -43,10 +43,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/gradle/wrapper/gradle-wrapper.properties
 /.idea/discord.xml
 /.idea/gradle.xml
-/gradle/wrapper/gradle-wrapper.jar
 /.idea/kotlinc.xml
 /.idea/misc.xml
 /.idea/vcs.xml
