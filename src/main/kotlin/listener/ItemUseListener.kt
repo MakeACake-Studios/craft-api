@@ -9,10 +9,30 @@ import org.makeacake.craft.action.ClickAction
 import org.makeacake.craft.item.ItemRegistry
 import org.makeacake.craft.util.CooldownManager
 import org.makeacake.craft.util.PermissionCheck
-import kotlin.collections.filter
 
+/**
+ * A Bukkit listener responsible for handling player interactions with custom items.
+ *
+ * This listener captures general clicks (left-click, right-click, and shift-clicks)
+ * performed by players holding a registered [org.makeacake.craft.item.CustomItem]. It dynamically resolves
+ * the specific interaction type, checks permissions, applies cooldowns, and triggers
+ * the appropriate [ClickAction].
+ *
+ * @author nalart11
+ * @since 1.0.0
+ */
 class ItemUseListener : Listener {
 
+    /**
+     * Handles the [PlayerInteractEvent] when a player clicks while holding an item.
+     *
+     * The method determines the correct [ActionType] based on the Bukkit [Action]
+     * and the player's sneaking state. If the held item matches a registered custom item
+     * and has corresponding actions, it verifies player permissions and cooldowns
+     * before executing the handlers.
+     *
+     * @param event The Bukkit interaction event containing details about the click and the item.
+     */
     @EventHandler
     fun onUse(event: PlayerInteractEvent) {
         val player = event.player
@@ -28,8 +48,8 @@ class ItemUseListener : Listener {
         }
 
         val actions = customItem.actions
-            .filter { it.type == actionType }
             .filterIsInstance<ClickAction>()
+            .filter { it.type == actionType }
 
         if (actions.isEmpty()) return
 

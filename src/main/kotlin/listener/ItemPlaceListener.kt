@@ -8,19 +8,34 @@ import org.makeacake.craft.action.PlaceBlockAction
 import org.makeacake.craft.item.ItemRegistry
 import org.makeacake.craft.util.CooldownManager
 import org.makeacake.craft.util.PermissionCheck
-import kotlin.collections.filter
 
+/**
+ * A Bukkit listener responsible for handling block placement events involving custom items.
+ *
+ * This listener intercepts the placement of blocks, verifies if the item being placed is a registered [org.makeacake.craft.item.CustomItem],
+ * validates player permissions, manages action cooldowns, and executes associated [PlaceBlockAction]s.
+ *
+ * @author nalart11
+ * @since 1.0.0
+ */
 class ItemPlaceListener : Listener {
 
+    /**
+     * Handles the [BlockPlaceEvent] when a player attempts to place a custom block.
+     *
+     * This method performs permission checks, cooldown validation, and executes the custom logic associated
+     * with the [PlaceBlockAction]. If the player lacks permission or the action is on cooldown,
+     * the placement event is canceled.
+     *
+     * @param event The block placement event containing details about the player, item in hand, and placed block.
+     */
     @EventHandler
     fun onPlace(event: BlockPlaceEvent) {
         val player = event.player
         val item = event.itemInHand
         val customItem = ItemRegistry.byItemStack(item) ?: return
 
-        val actions = customItem.actions
-            .filter { it.type == ActionType.BLOCK_PLACE }
-            .filterIsInstance<PlaceBlockAction>()
+        val actions = customItem.actions.filterIsInstance<PlaceBlockAction>()
 
         if (actions.isEmpty()) return
 

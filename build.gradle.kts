@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     kotlin("jvm") version "2.1.0"
     id("maven-publish")
+    id("org.jetbrains.dokka") version "2.1.0"
 }
 
 group = "org.makeacake"
@@ -19,6 +20,12 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+}
+
+dokka {
+    dokkaSourceSets.configureEach {
+        sourceRoots.from(file("paper/src/main/kotlin"))
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

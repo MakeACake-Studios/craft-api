@@ -5,24 +5,33 @@ import org.bukkit.persistence.PersistentDataType
 import org.makeacake.craft.action.ItemAction
 
 /**
- * Кастомный айтем внутри сервера
+ * A custom item representation within the server.
  *
- * Создаёт айтем доступный для создания игроками внутри сервера
- * и возможность задания ему особых свойств
+ * Defines an item that can be created or obtained by players,
+ * assigning it unique properties and custom interaction behaviors.
  *
- * @property key ID предмета
- * @property item Используемый ванильный предмет для реализации нашего кастомного предмета
- * @property actions Список действий выполняемых при взаимодействии с предметом
+ * @property key The unique identifier ([ItemKey]) of the custom item.
+ * @property item The base vanilla [ItemStack] used as a template for this custom item.
+ * @property actions A list of [ItemAction]s defining behaviors upon interaction.
+ *
  * @author nalart11
- * @since 0.7b
- * **/
-
+ * @since 1.0.0
+ */
 class CustomItem(
     val key: ItemKey,
     val item: ItemStack,
     val actions: List<ItemAction>
 ) {
 
+    /**
+     * Checks if the specified [ItemStack] matches this custom item.
+     *
+     * This is determined by verifying the presence of the custom item's
+     * namespaced key within the item's PersistentDataContainer.
+     *
+     * @param stack The [ItemStack] to verify. Can be null.
+     * @return `true` if the item matches this custom item, `false` otherwise.
+     */
     fun matches(stack: ItemStack?): Boolean {
         if (stack == null || !stack.hasItemMeta()) return false
         val pdc = stack.itemMeta.persistentDataContainer
@@ -30,9 +39,15 @@ class CustomItem(
     }
 
     /**
-     * Создает копию предмета из шаблона.
-     * @param amount Количество предметов
-     * @param modifier Опциональная лямбда для переопределения названия, лора, текстуры головы и т.д.
+     * Creates a new [ItemStack] based on the custom item template.
+     *
+     * Automatically injects the custom item's identifier into the PersistentDataContainer
+     * to allow future identification via the [matches] method.
+     *
+     * @param amount The stack size of the newly created item. Defaults to 1.
+     * @param modifier An optional lambda to override specific meta properties
+     * (e.g., display name, lore, custom model data, or skull texture).
+     * @return A ready-to-use custom [ItemStack].
      */
     fun createItemStack(amount: Int = 1, modifier: (ItemStack) -> Unit = {}): ItemStack {
         val stack = item.clone()
