@@ -1,8 +1,10 @@
 package org.makeacake.craft.action
 
 import org.bukkit.block.Block
+import org.bukkit.block.BrewingStand
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.inventory.BrewEvent
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
@@ -22,7 +24,8 @@ enum class ActionType {
     DROP,
     PICKUP,
     ENTITY_INTERACT,
-    BLOCK_PLACE
+    BLOCK_PLACE,
+    BREW
 }
 
 /**
@@ -90,4 +93,11 @@ class PlaceBlockAction(
     val handler: (Player, ItemStack, Block, BlockPlaceEvent) -> Unit
 ) : ItemAction {
     override val type: ActionType = ActionType.BLOCK_PLACE
+}
+
+class BrewAction(
+    val handler: (BrewingStand, ItemStack, BrewEvent) -> Unit
+) : ItemAction {
+    override val type: ActionType = ActionType.BREW
+    override var cooldownSeconds: Int? = null
 }

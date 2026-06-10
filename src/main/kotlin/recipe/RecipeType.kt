@@ -13,5 +13,6 @@ package org.makeacake.craft.recipe
 
 enum class RecipeType {
     SHAPED,
-    SHAPELESS
+    SHAPELESS,
+    BREWING
 }

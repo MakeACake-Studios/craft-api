@@ -5,10 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="400e542b-e47f-4880-9be9-cb04640dc3e2" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/recipe/BrewRecipeBuilders.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/recipe/CustomBrewRecipe.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/recipe/CustomCraftRecipe.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/action/ActionType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/action/ActionType.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/recipe/CustomRecipe.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/recipe/CustomRecipe.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/recipe/RecipeBuilder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/recipe/RecipeBuilder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/recipe/RecipeRegistry.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/recipe/RecipeRegistry.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +54,13 @@
         </projects_view>
       </state>
     </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -95,7 +106,7 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "ver/1.0.0",
+    "git-widget-placeholder": "ver/1.0.X",
     "git.auto.fetch.suggestion.counter": "1",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",

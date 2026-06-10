@@ -1,20 +1,24 @@
+package org.makeacake.craft.recipe
+
+import org.bukkit.NamespacedKey
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.Recipe
+import org.bukkit.inventory.ShapedRecipe
+
 /**
  * A centralized registry for managing all custom crafting recipes within the server.
  *
- * This singleton facilitates the mapping between standard Bukkit [Recipe] objects 
- * and their corresponding [CustomRecipe] wrappers, ensuring that custom logic 
+ * This singleton facilitates the mapping between standard Bukkit [Recipe] objects
+ * and their corresponding [CustomRecipe] wrappers, ensuring that custom logic
  * and metadata are preserved during the crafting process.
  *
  * @author nalart11
  * @since 1.0.0
  */
-package org.makeacake.craft.recipe
-
-import org.bukkit.inventory.Recipe
-
 object RecipeRegistry {
 
-    private val recipes = mutableMapOf<Recipe, CustomRecipe>()
+    private val recipes = mutableListOf<CustomRecipe>()
+    private val craftRecipes = mutableMapOf<Recipe, CustomCraftRecipe>()
 
     /**
      * Registers a [CustomRecipe] into the internal storage.
@@ -22,30 +26,38 @@ object RecipeRegistry {
      * @param recipe The custom recipe instance to be indexed.
      */
     fun register(recipe: CustomRecipe) {
-        recipes[recipe.recipe] = recipe
+        recipes.add(recipe)
+        if (recipe is CustomCraftRecipe) {
+            craftRecipes[recipe.recipe] = recipe
+        }
     }
 
     /**
-     * Retrieves a [CustomRecipe] by its underlying Bukkit [Recipe] instance.
+     * Retrieves a [CustomCraftRecipe] by its underlying Bukkit [Recipe] instance.
      *
      * @param recipe The standard Bukkit recipe to look up.
-     * @return The associated [CustomRecipe], or null if no mapping exists.
+     * @return The associated [CustomCraftRecipe], or null if no mapping exists.
      */
-    fun byRecipe(recipe: Recipe?): CustomRecipe? {
+    fun byRecipe(recipe: Recipe?): CustomCraftRecipe? {
         if (recipe == null) return null
-        return recipes[recipe]
+        return craftRecipes[recipe]
+    }
+
+    fun matchBrew(ingredient: ItemStack?, base: ItemStack?): CustomBrewRecipe? {
+        return recipes.filterIsInstance<CustomBrewRecipe>()
+            .firstOrNull { it.matches(ingredient, base) }
     }
 
     /**
      * Extracts all unique [org.bukkit.NamespacedKey]s from registered shaped recipes.
      *
-     * This is commonly used to manage recipe discovery and visibility 
+     * This is commonly used to manage recipe discovery and visibility
      * in the player's recipe book.
      *
      * @return A list of namespaced keys for all registered shaped recipes.
      */
-    fun getAllKeys(): List<org.bukkit.NamespacedKey> {
-        return recipes.keys.filterIsInstance<org.bukkit.inventory.ShapedRecipe>()
+    fun getAllKeys(): List<NamespacedKey> {
+        return craftRecipes.keys.filterIsInstance<ShapedRecipe>()
             .map { it.key }
     }
 }

@@ -2,6 +2,7 @@ package org.makeacake.craft
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import org.makeacake.craft.listener.BrewListener
 import org.makeacake.craft.listener.CraftListener
 import org.makeacake.craft.listener.ItemPlaceListener
 import org.makeacake.craft.listener.ItemUseListener
@@ -39,5 +40,6 @@ object CraftAPI {
         pm.registerEvents(ItemUseListener(), plugin)
         pm.registerEvents(JoinListener(), plugin)
         pm.registerEvents(ItemPlaceListener(), plugin)
+        pm.registerEvents(BrewListener(), plugin)
     }
 }

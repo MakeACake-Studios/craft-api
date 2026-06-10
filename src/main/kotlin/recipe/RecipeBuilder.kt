@@ -57,12 +57,12 @@ class RecipeBuilder(private val item: CustomItem) {
      * Finalizes the recipe, registers it within the Bukkit server, 
      * and adds it to the internal [RecipeRegistry].
      *
-     * @return The constructed [CustomRecipe] instance.
+     * @return The constructed [CustomCraftRecipe] instance.
      */
-    fun build(): CustomRecipe {
+    fun build(): CustomCraftRecipe {
         Bukkit.addRecipe(recipe)
 
-        val customRecipe = CustomRecipe(
+        val customRecipe = CustomCraftRecipe(
             item = item,
             recipe = recipe,
             craftActions = craftActions.toList()
