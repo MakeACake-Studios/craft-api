@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="400e542b-e47f-4880-9be9-cb04640dc3e2" name="Changes" comment="Added logic for creating potions">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="400e542b-e47f-4880-9be9-cb04640dc3e2" name="Changes" comment="Updated to 26.1.2, added PotionMix registration logic for brewing" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="42" />
+    <option name="cachedIndexableFilesCount" value="43" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -183,6 +181,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added logic for creating potions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added logic for creating potions" />
+    <MESSAGE value="Updated to 26.1.2, added PotionMix registration logic for brewing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated to 26.1.2, added PotionMix registration logic for brewing" />
   </component>
 </project>
