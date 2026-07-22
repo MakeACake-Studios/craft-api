@@ -4,6 +4,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapedRecipe
+import org.makeacake.craft.CraftAPI
 
 /**
  * A centralized registry for managing all custom crafting recipes within the server.
@@ -46,6 +47,18 @@ object RecipeRegistry {
     fun matchBrew(ingredient: ItemStack?, base: ItemStack?): CustomBrewRecipe? {
         return recipes.filterIsInstance<CustomBrewRecipe>()
             .firstOrNull { it.matches(ingredient, base) }
+    }
+
+    private var brewMixCounter = 0
+
+    /**
+     * Generates a unique [NamespacedKey] for registering a [io.papermc.paper.potion.PotionMix].
+     *
+     * A distinct key is required per mix, since a single result [org.makeacake.craft.item.CustomItem]
+     * may be produced by several different (ingredient, base) combinations.
+     */
+    internal fun nextBrewMixKey(): NamespacedKey {
+        return NamespacedKey(CraftAPI.plugin, "brew_mix_${brewMixCounter++}")
     }
 
     /**
