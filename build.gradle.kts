@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "org.makeacake"
-version = "1.0.0"
+version = "1.1.2"
 
 kotlin {
     jvmToolchain(25)
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.2.build.74-stable")
+    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
 }
 
 dokka {

@@ -1,6 +1,7 @@
 package org.makeacake.craft.item
 
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 
 /**
  * A centralized registry for managing all custom server items.
@@ -37,7 +38,10 @@ object ItemRegistry {
      * @return The matching [CustomItem], or `null` if the stack is null or not recognized as a custom item.
      */
     fun byItemStack(stack: ItemStack?): CustomItem? {
-        return items.values.firstOrNull { it.matches(stack) }
+        val pdc = stack?.persistentDataContainer ?: return null
+        return items.values.firstOrNull { customItem ->
+            pdc.has(customItem.key.namespacedKey, PersistentDataType.BYTE)
+        }
     }
 
     /**
@@ -48,7 +52,15 @@ object ItemRegistry {
      * @param key The unique identifier of the item.
      * @return The corresponding [CustomItem], or `null` if no item with this key is registered.
      */
-    fun byKey(key: ItemKey): CustomItem? {
-        return items[key]
-    }
+    fun byKey(key: ItemKey): CustomItem? = items[key]
+
+    /**
+     * Retrieves a registered [CustomItem] directly by its specific [ItemKey.id].
+     *
+     * This lookup is highly efficient as it uses the underlying Map structure (O(1)).
+     *
+     * @param id String identifier of the item.
+     * @return The corresponding [CustomItem], or `null` if no item with this id is registered.
+     */
+    fun byId(id: String): CustomItem? = items[ItemKey(id)]
 }
