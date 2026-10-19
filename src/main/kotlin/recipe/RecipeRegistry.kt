@@ -34,6 +34,12 @@ object RecipeRegistry {
     }
 
     /**
+     * Returns a snapshot of all registered custom recipes, including crafting and brewing recipes.
+     * Changes to the returned list do not affect the registry.
+     */
+    fun allRecipes(): List<CustomRecipe> = recipes.toList()
+
+    /**
      * Retrieves a [CustomCraftRecipe] by its underlying Bukkit [Recipe] instance.
      *
      * @param recipe The standard Bukkit recipe to look up.
