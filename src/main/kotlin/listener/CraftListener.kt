@@ -7,7 +7,8 @@ import org.bukkit.event.inventory.CraftItemEvent
 import org.makeacake.craft.action.ActionType
 import org.makeacake.craft.action.CraftAction
 import org.makeacake.craft.item.ItemRegistry
-import kotlin.collections.filter
+import org.makeacake.craft.recipe.RecipeRegistry
+import org.makeacake.craft.util.CooldownManager
 
 /**
  * A Bukkit listener responsible for handling crafting events related to custom items.
@@ -30,18 +31,23 @@ class CraftListener : Listener {
      *
      * @param event The Bukkit event containing details about the crafting action.
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     fun onCraft(event: CraftItemEvent) {
         val player = event.whoClicked as? Player ?: return
-        val resultItem = event.recipe.result
-
-        val customItem = ItemRegistry.byItemStack(resultItem) ?: return
-
-        customItem.actions
+        val resultItem = event.currentItem ?: event.recipe.result
+        val recipe = RecipeRegistry.byRecipe(event.recipe)
+        val customItem = recipe?.item ?: ItemRegistry.byItemStack(resultItem) ?: return
+        val actions = recipe?.craftActions.orEmpty() + customItem.actions
             .filter { it.type == ActionType.CRAFT }
             .filterIsInstance<CraftAction>()
-            .forEach {
-                it.handler(player, resultItem, event)
-            }
+        if (actions.isEmpty()) return
+
+        val cooldown = actions.mapNotNull { it.cooldownSeconds }.maxOrNull()
+        if (!CooldownManager.tryUse(player.uniqueId, customItem.key, ActionType.CRAFT, cooldown)) {
+            event.isCancelled = true
+            return
+        }
+
+        actions.forEach { it.handler(player, resultItem, event) }
     }
 }

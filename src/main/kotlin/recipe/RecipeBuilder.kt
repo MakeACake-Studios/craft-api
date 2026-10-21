@@ -2,6 +2,10 @@ package org.makeacake.craft.recipe
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
+import org.bukkit.event.inventory.CraftItemEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.makeacake.craft.action.CraftAction
 import org.makeacake.craft.item.CustomItem
@@ -14,12 +18,16 @@ import org.makeacake.craft.item.CustomItem
  * triggered upon successful crafting.
  *
  * @param item The custom item that will be the result of this recipe.
+ * @param key The recipe key. Supply a distinct key for each recipe with the same result item.
  * @author nalart11
  * @since 1.0.0
  */
-class RecipeBuilder(private val item: CustomItem) {
+class RecipeBuilder(
+    private val item: CustomItem,
+    key: NamespacedKey = item.key.namespacedKey
+) {
 
-    private val recipe = ShapedRecipe(item.key.namespacedKey, item.createItemStack())
+    private val recipe = ShapedRecipe(key, item.createItemStack())
     private val craftActions = mutableListOf<CraftAction>()
 
     /**
@@ -53,6 +61,11 @@ class RecipeBuilder(private val item: CustomItem) {
         craftActions += action
     }
 
+    fun onCraft(
+        cooldownSeconds: Int? = null,
+        handler: (Player, ItemStack, CraftItemEvent) -> Unit
+    ) = onCraft(CraftAction(cooldownSeconds, handler))
+
     /**
      * Finalizes the recipe, registers it within the Bukkit server, 
      * and adds it to the internal [RecipeRegistry].
@@ -60,7 +73,8 @@ class RecipeBuilder(private val item: CustomItem) {
      * @return The constructed [CustomCraftRecipe] instance.
      */
     fun build(): CustomCraftRecipe {
-        Bukkit.addRecipe(recipe)
+        require(!RecipeRegistry.hasCraftRecipe(recipe.key)) { "Recipe ${recipe.key} is already registered" }
+        check(Bukkit.addRecipe(recipe)) { "Could not register recipe ${recipe.key}" }
 
         val customRecipe = CustomCraftRecipe(
             item = item,

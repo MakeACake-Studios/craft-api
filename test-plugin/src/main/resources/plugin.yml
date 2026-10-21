@@ -1,0 +1,16 @@
+name: CraftApiTest
+version: 1.0.0
+main: org.makeacake.craft.testplugin.CraftApiTestPlugin
+api-version: '1.21.11'
+commands:
+  craftapitest:
+    description: Give items for testing Craft API
+    usage: /craftapitest <give|status|reset>
+    permission: craftapitest.command
+permissions:
+  craftapitest.command:
+    default: op
+  craftapitest.item.free_wand:
+    default: true
+  craftapitest.item.cooldown_wand:
+    default: true

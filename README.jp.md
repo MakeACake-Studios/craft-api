@@ -7,9 +7,9 @@ PaperMCサーバー向けに、カスタムアクション、クールダウン�
 ---
 
 ### 要件
-* **Paper API** 1.21.11 以上
-* **Java 21** 以上
-* **Kotlin 1.9.0+**
+* **Paper** 1.21.11 から 26.3
+* **Java 25 以上**（このライブラリを使用するサーバー）
+* **Kotlin 2.4.10**
 
 ### インストール
 
@@ -25,7 +25,7 @@ repositories {
 2. 依存関係を追加します：
 ```kotlin
 dependencies {
-    implementation("com.github.MakeACake-Studios:craft-api:1.0.2")
+    implementation("com.github.MakeACake-Studios:craft-api:1.1.2")
 }
 ```
 
@@ -79,5 +79,12 @@ RecipeBuilder(magicStick)
 ### 特徴
 * **権限 (Permissions)**: `yourplugin.item.item_id`
 * **クールダウン (Cooldowns)**: `CooldownManager` による自動クールダウン管理。
+  `cooldownSeconds` を設定しない場合、クールダウンはありません。
 * **アクションタイプ (ActionTypes)**: `RIGHT_CLICK`, `LEFT_CLICK`, `SHIFT_RIGHT_CLICK`, `SHIFT_LEFT_CLICK`, `CRAFT`, `BLOCK_PLACE`
-```
+
+同じアイテムに複数のレシピを登録する場合は、各 `RecipeBuilder` の第2引数に異なる `NamespacedKey` を指定してください。
+プラグインの有効化時に `CraftAPI.init(this)` を呼び出すと、無効化時に API の登録が解除されます。
+
+このライブラリは Java 25 のバイトコードでビルドされ、デフォルトでは Paper 1.21.11 API を使用します。Paper 26.3 では `BrewingRecipe`、それ以前では `PotionMix` を使用します。新しい API の確認には `./gradlew build -PpaperApiVersion=26.3.build.+` を実行してください。CI は 1.21.11、26.1.1、26.1.2、26.2、26.3 を確認します。Paper 1.21.11 の推奨 Java は 21 ですが、このライブラリを使用するサーバーには Java 25 が必要です。同じプラグイン JAR を全バージョンで読み込むには、`plugin.yml` に `api-version: '1.21.11'` を指定してください。ライブラリと互換性のある Kotlin ランタイムをプラグイン JAR に同梱するか、依存関係ローダーを設定してください。
+
+サーバーでの確認には、Paper 1.21.11 で [テストプラグイン](test-plugin/README.md) を `./gradlew :test-plugin:runServer` で起動します。Paper 26.3 では `./gradlew :test-plugin:runServer -PpaperServerVersion=26.3` を使用してください。

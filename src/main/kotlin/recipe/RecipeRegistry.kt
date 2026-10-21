@@ -1,5 +1,7 @@
 package org.makeacake.craft.recipe
 
+import org.bukkit.Bukkit
+import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
@@ -19,7 +21,9 @@ import org.makeacake.craft.CraftAPI
 object RecipeRegistry {
 
     private val recipes = mutableListOf<CustomRecipe>()
-    private val craftRecipes = mutableMapOf<Recipe, CustomCraftRecipe>()
+    private val craftRecipes = mutableMapOf<NamespacedKey, CustomCraftRecipe>()
+    private val brewMixKeys = mutableSetOf<NamespacedKey>()
+    private val brewingRecipeKeys = mutableSetOf<NamespacedKey>()
 
     /**
      * Registers a [CustomRecipe] into the internal storage.
@@ -27,10 +31,13 @@ object RecipeRegistry {
      * @param recipe The custom recipe instance to be indexed.
      */
     fun register(recipe: CustomRecipe) {
-        recipes.add(recipe)
         if (recipe is CustomCraftRecipe) {
-            craftRecipes[recipe.recipe] = recipe
+            val key = (recipe.recipe as? Keyed)?.key
+                ?: throw IllegalArgumentException("Craft recipe must have a namespaced key")
+            require(key !in craftRecipes) { "Recipe $key is already registered" }
+            craftRecipes[key] = recipe
         }
+        recipes.add(recipe)
     }
 
     /**
@@ -40,14 +47,20 @@ object RecipeRegistry {
     fun allRecipes(): List<CustomRecipe> = recipes.toList()
 
     /**
-     * Retrieves a [CustomCraftRecipe] by its underlying Bukkit [Recipe] instance.
+     * Retrieves a [CustomCraftRecipe] by the namespaced key of a Bukkit [Recipe].
      *
      * @param recipe The standard Bukkit recipe to look up.
      * @return The associated [CustomCraftRecipe], or null if no mapping exists.
      */
     fun byRecipe(recipe: Recipe?): CustomCraftRecipe? {
         if (recipe == null) return null
-        return craftRecipes[recipe]
+        return craftRecipes[(recipe as? Keyed)?.key]
+    }
+
+    internal fun hasCraftRecipe(key: NamespacedKey): Boolean = key in craftRecipes
+
+    internal fun registerBrewRecipeKey(key: NamespacedKey, modern: Boolean) {
+        if (modern) brewingRecipeKeys.add(key) else brewMixKeys.add(key)
     }
 
     fun matchBrew(ingredient: ItemStack?, base: ItemStack?): CustomBrewRecipe? {
@@ -55,16 +68,30 @@ object RecipeRegistry {
             .firstOrNull { it.matches(ingredient, base) }
     }
 
-    private var brewMixCounter = 0
+    private var brewingRecipeCounter = 0
 
     /**
-     * Generates a unique [NamespacedKey] for registering a [io.papermc.paper.potion.PotionMix].
+     * Generates a unique [NamespacedKey] for registering a brewing recipe.
      *
      * A distinct key is required per mix, since a single result [org.makeacake.craft.item.CustomItem]
      * may be produced by several different (ingredient, base) combinations.
      */
-    internal fun nextBrewMixKey(): NamespacedKey {
-        return NamespacedKey(CraftAPI.plugin, "brew_mix_${brewMixCounter++}")
+    internal fun nextBrewingRecipeKey(): NamespacedKey {
+        return NamespacedKey(CraftAPI.plugin, "brew_mix_${brewingRecipeCounter++}")
+    }
+
+    internal fun clear() {
+        craftRecipes.keys.forEach(Bukkit::removeRecipe)
+        brewingRecipeKeys.forEach(Bukkit::removeRecipe)
+        if (brewMixKeys.isNotEmpty()) {
+            val brewer = Bukkit.getPotionBrewer()
+            brewMixKeys.forEach(brewer::removePotionMix)
+        }
+        recipes.clear()
+        craftRecipes.clear()
+        brewMixKeys.clear()
+        brewingRecipeKeys.clear()
+        brewingRecipeCounter = 0
     }
 
     /**
@@ -76,7 +103,6 @@ object RecipeRegistry {
      * @return A list of namespaced keys for all registered shaped recipes.
      */
     fun getAllKeys(): List<NamespacedKey> {
-        return craftRecipes.keys.filterIsInstance<ShapedRecipe>()
-            .map { it.key }
+        return craftRecipes.values.mapNotNull { (it.recipe as? ShapedRecipe)?.key }
     }
 }

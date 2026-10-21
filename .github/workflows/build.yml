@@ -10,6 +10,14 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - paper_api: 1.21.11-R0.1-SNAPSHOT
+          - paper_api: 26.1.1.build.29-alpha
+          - paper_api: 26.1.2.build.+
+          - paper_api: 26.2.build.+
+          - paper_api: 26.3.build.+
 
     steps:
       - name: Check out repository
@@ -25,11 +33,20 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build library
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build --no-daemon -PpaperApiVersion=${{ matrix.paper_api }}
 
       - name: Upload library JAR
+        if: matrix.paper_api == '1.21.11-R0.1-SNAPSHOT'
         uses: actions/upload-artifact@v7
         with:
           name: craft-api
           path: build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Upload test plugin JAR
+        if: matrix.paper_api == '1.21.11-R0.1-SNAPSHOT'
+        uses: actions/upload-artifact@v7
+        with:
+          name: craft-api-test-plugin
+          path: test-plugin/build/libs/craft-api-test-plugin.jar
           if-no-files-found: error

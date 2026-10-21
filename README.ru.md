@@ -7,9 +7,9 @@
 ---
 
 ### Требования
-* **Paper API** 1.21.11 или выше.
-* **Java 21** или выше.
-* **Kotlin 1.9.0+**.
+* **Paper** от 1.21.11 до 26.3.
+* **Java 25 или новее** на сервере, где используется библиотека.
+* **Kotlin 2.4.10**.
 
 ### Установка
 
@@ -25,7 +25,7 @@ repositories {
 2. Добавьте зависимость:
 ```kotlin
 dependencies {
-    implementation("com.github.MakeACake-Studios:craft-api:1.0.2")
+    implementation("com.github.MakeACake-Studios:craft-api:1.1.2")
 }
 ```
 
@@ -81,4 +81,12 @@ RecipeBuilder(magicStick)
 ### Особенности
 * **Права (Permissions)**: `yourplugin.item.item_id`
 * **Перезарядка**: Автоматическое управление кулдаунами через `CooldownManager`.
+  Без `cooldownSeconds` перезарядка не применяется.
 * **Типы действий**: `RIGHT_CLICK`, `LEFT_CLICK`, `SHIFT_RIGHT_CLICK`, `SHIFT_LEFT_CLICK`, `CRAFT`, `BLOCK_PLACE`.
+
+Для нескольких рецептов одного предмета передайте каждому `RecipeBuilder` отдельный `NamespacedKey` вторым аргументом.
+Вызовите `CraftAPI.init(this)` при включении плагина; при его отключении API удалит свои регистрации.
+
+Библиотека собирается в байткод Java 25 и по умолчанию использует API Paper 1.21.11. На Paper 26.3 рецепты варки регистрируются через `BrewingRecipe`, на более старых версиях — через `PotionMix`. Для проверки новой версии запустите `./gradlew build -PpaperApiVersion=26.3.build.+`; CI проверяет 1.21.11, 26.1.1, 26.1.2, 26.2 и 26.3. Для Paper 1.21.11 рекомендуется Java 21, но сервер с этой библиотекой должен работать на Java 25. Если один JAR плагина должен загружаться на всём диапазоне, укажите в его `plugin.yml` значение `api-version: '1.21.11'`. Включите библиотеку и совместимую среду Kotlin в JAR плагина либо настройте загрузчик зависимостей.
+
+Для проверки на сервере запустите [тестовый плагин](test-plugin/README.md) на Paper 1.21.11 командой `./gradlew :test-plugin:runServer` или на Paper 26.3 командой `./gradlew :test-plugin:runServer -PpaperServerVersion=26.3`.

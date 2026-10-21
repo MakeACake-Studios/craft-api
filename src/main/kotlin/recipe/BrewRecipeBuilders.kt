@@ -1,7 +1,5 @@
 package org.makeacake.craft.recipe
 
-import io.papermc.paper.potion.PotionMix
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.RecipeChoice
@@ -16,13 +14,25 @@ class BrewRecipeBuilder(private val item: CustomItem) {
     private var baseCustomItem: CustomItem? = null
     private val brewActions = mutableListOf<BrewAction>()
 
-    fun ingredient(material: Material) = apply { this.ingredientMaterial = material }
+    fun ingredient(material: Material) = apply {
+        ingredientMaterial = material
+        ingredientCustomItem = null
+    }
 
-    fun ingredient(customItem: CustomItem) = apply { this.ingredientCustomItem = customItem }
+    fun ingredient(customItem: CustomItem) = apply {
+        ingredientCustomItem = customItem
+        ingredientMaterial = null
+    }
 
-    fun base(material: Material) = apply { this.baseMaterial = material }
+    fun base(material: Material) = apply {
+        baseMaterial = material
+        baseCustomItem = null
+    }
 
-    fun base(customItem: CustomItem) = apply { this.baseCustomItem = customItem }
+    fun base(customItem: CustomItem) = apply {
+        baseCustomItem = customItem
+        baseMaterial = null
+    }
 
     fun onBrew(action: BrewAction) = apply { this.brewActions += action }
 
@@ -39,30 +49,31 @@ class BrewRecipeBuilder(private val item: CustomItem) {
             brewActions = brewActions.toList()
         )
 
+        registerBrewingRecipe(recipe)
         RecipeRegistry.register(recipe)
-        registerPotionMix(recipe)
         return recipe
     }
 
     /**
-     * Registers a [PotionMix] with the server's [org.bukkit.potion.PotionBrewer].
+     * Registers a brewing recipe with the API available on the running server.
      *
      * Without this, the vanilla brewing stand slot checks reject any ingredient/base
      * that Minecraft doesn't already recognize as a valid brewing item, so players would
      * be unable to physically place a custom ingredient or base into the stand at all.
      */
-    private fun registerPotionMix(recipe: CustomBrewRecipe) {
+    private fun registerBrewingRecipe(recipe: CustomBrewRecipe) {
         val ingredientChoice: RecipeChoice = ingredientCustomItem?.let { custom ->
-            PotionMix.createPredicateChoice { stack -> custom.matches(stack) }
+            BrewingRecipeRegistrar.customChoice(custom)
         } ?: RecipeChoice.MaterialChoice(ingredientMaterial!!)
 
         val inputChoice: RecipeChoice = baseCustomItem?.let { custom ->
-            PotionMix.createPredicateChoice { stack -> custom.matches(stack) }
+            BrewingRecipeRegistrar.customChoice(custom)
         } ?: RecipeChoice.MaterialChoice(baseMaterial!!)
 
         val resultStack: ItemStack = recipe.item.createItemStack()
 
-        val mix = PotionMix(RecipeRegistry.nextBrewMixKey(), resultStack, inputChoice, ingredientChoice)
-        Bukkit.getPotionBrewer().addPotionMix(mix)
+        val key = RecipeRegistry.nextBrewingRecipeKey()
+        val modern = BrewingRecipeRegistrar.register(key, resultStack, inputChoice, ingredientChoice)
+        RecipeRegistry.registerBrewRecipeKey(key, modern)
     }
 }

@@ -2,6 +2,7 @@ package org.makeacake.craft.item
 
 import org.bukkit.NamespacedKey
 import org.makeacake.craft.CraftAPI
+import java.util.Locale
 
 /**
  * Represents a unique identifier for a custom item.
@@ -23,5 +24,5 @@ data class ItemKey(val id: String) {
      * It uses the plugin instance from [CraftAPI.plugin] and automatically
      * converts the [id] to lowercase to strictly comply with Bukkit's namespace rules.
      */
-    val namespacedKey = NamespacedKey(CraftAPI.plugin, id.lowercase())
+    val namespacedKey = NamespacedKey(CraftAPI.plugin, id.lowercase(Locale.ROOT))
 }

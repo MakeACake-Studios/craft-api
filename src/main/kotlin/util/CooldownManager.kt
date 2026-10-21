@@ -1,5 +1,6 @@
 package org.makeacake.craft.util
 
+import org.bukkit.NamespacedKey
 import org.makeacake.craft.action.ActionType
 import org.makeacake.craft.item.ItemKey
 import java.util.UUID
@@ -18,9 +19,7 @@ import kotlin.math.ceil
  */
 object CooldownManager {
 
-    private val cooldowns = ConcurrentHashMap<UUID, MutableMap<String, Long>>()
-
-    private const val DEFAULT_COOLDOWN = 5
+    private val cooldowns = ConcurrentHashMap<UUID, ConcurrentHashMap<Pair<NamespacedKey, ActionType>, Long>>()
 
     /**
      * Attempts to perform an action. If the action is not on cooldown,
@@ -29,20 +28,28 @@ object CooldownManager {
      * @param player The unique ID of the player.
      * @param key The unique key of the custom item.
      * @param actionType The type of action being performed.
-     * @param cooldownSeconds The duration of the cooldown in seconds. If null, [DEFAULT_COOLDOWN] is used.
+     * @param cooldownSeconds The duration in seconds. Null or zero disables the cooldown.
      * @return `true` if the action can be performed, `false` if it is currently on cooldown.
      */
-    fun tryUse(player: UUID, key: ItemKey, actionType: ActionType, cooldownSeconds: Int?): Boolean {
+    fun tryUse(player: UUID, key: ItemKey, actionType: ActionType, cooldownSeconds: Int?): Boolean =
+        tryUse(player, key.namespacedKey, actionType, cooldownSeconds)
+
+    fun tryUse(player: UUID, key: NamespacedKey, actionType: ActionType, cooldownSeconds: Int?): Boolean {
+        require(cooldownSeconds == null || cooldownSeconds >= 0) { "Cooldown cannot be negative" }
+        if (cooldownSeconds == null || cooldownSeconds == 0) return true
+
         val now = System.currentTimeMillis()
         val map = cooldowns.computeIfAbsent(player) { ConcurrentHashMap() }
-
-        val mapKey = "${key.id}_${actionType.name}"
-
-        val expiresAt = map[mapKey] ?: 0L
-        if (expiresAt > now) return false
-
-        map[mapKey] = now + (cooldownSeconds?.times(1000L) ?: DEFAULT_COOLDOWN.times(1000L))
-        return true
+        val mapKey = key to actionType
+        var allowed = false
+        map.compute(mapKey) { _, expiresAt ->
+            if (expiresAt != null && expiresAt > now) expiresAt
+            else {
+                allowed = true
+                now + cooldownSeconds * 1000L
+            }
+        }
+        return allowed
     }
 
     /**
@@ -53,8 +60,11 @@ object CooldownManager {
      * @param actionType The type of action to check.
      * @return The number of seconds remaining, rounded up. Returns 0 if no cooldown is active.
      */
-    fun remaining(player: UUID, key: ItemKey, actionType: ActionType): Int {
-        val mapKey = "${key.id}_${actionType.name}"
+    fun remaining(player: UUID, key: ItemKey, actionType: ActionType): Int =
+        remaining(player, key.namespacedKey, actionType)
+
+    fun remaining(player: UUID, key: NamespacedKey, actionType: ActionType): Int {
+        val mapKey = key to actionType
         val expiresAt = cooldowns[player]?.get(mapKey) ?: return 0
         val diff = expiresAt - System.currentTimeMillis()
         return if (diff <= 0) 0 else ceil(diff / 1000.0).toInt()
@@ -67,5 +77,9 @@ object CooldownManager {
      */
     fun clear(player: UUID) {
         cooldowns.remove(player)
+    }
+
+    internal fun clearAll() {
+        cooldowns.clear()
     }
 }

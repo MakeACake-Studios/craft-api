@@ -63,4 +63,8 @@ object ItemRegistry {
      * @return The corresponding [CustomItem], or `null` if no item with this id is registered.
      */
     fun byId(id: String): CustomItem? = items[ItemKey(id)]
+
+    internal fun clear() {
+        items.clear()
+    }
 }
