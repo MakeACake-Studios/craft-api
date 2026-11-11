@@ -68,7 +68,7 @@ class BrewRecipeBuilder(private val item: CustomItem) {
 
         val inputChoice: RecipeChoice = baseCustomItem?.let { custom ->
             BrewingRecipeRegistrar.customChoice(custom)
-        } ?: RecipeChoice.MaterialChoice(baseMaterial!!)
+        } ?: BrewingRecipeRegistrar.baseChoice(baseMaterial!!)
 
         val resultStack: ItemStack = recipe.item.createItemStack()
 

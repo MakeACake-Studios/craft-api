@@ -4,6 +4,8 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.makeacake.craft.action.BrewAction
 import org.makeacake.craft.item.CustomItem
+import org.makeacake.craft.item.ItemRegistry
+import recipe.BrewBaseMatcher
 
 class CustomBrewRecipe(
     override val item: CustomItem,
@@ -23,8 +25,12 @@ class CustomBrewRecipe(
         }
 
         val baseMatches = when {
-            baseCustomItem != null -> baseCustomItem.matches(base)
-            baseMaterial != null -> base.type == baseMaterial
+            baseCustomItem != null ->
+                baseCustomItem.matches(base)
+
+            baseMaterial != null ->
+                BrewBaseMatcher.matches(baseMaterial, base)
+
             else -> false
         }
 

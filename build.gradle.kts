@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "org.makeacake"
-version = "1.1.2"
+version = "1.1.3"
 
 val paperApiVersion = providers.gradleProperty("paperApiVersion")
     .orElse("1.21.11-R0.1-SNAPSHOT")
@@ -32,6 +32,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:${paperApiVersion.get()}")
     testImplementation(kotlin("test"))
     testImplementation("io.papermc.paper:paper-api:${paperApiVersion.get()}")
+    testImplementation("org.mockito:mockito-core:5.24.0")
 }
 
 dokka {

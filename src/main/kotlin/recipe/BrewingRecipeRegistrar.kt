@@ -1,11 +1,14 @@
 package org.makeacake.craft.recipe
 
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.RecipeChoice
 import org.makeacake.craft.item.CustomItem
+import org.makeacake.craft.item.ItemRegistry
+import recipe.BrewBaseMatcher
 import java.util.function.Predicate
 
 /** Uses the 26.3 BrewingRecipe when present without linking it on older servers. */
@@ -20,6 +23,23 @@ internal object BrewingRecipeRegistrar {
 
     internal val usesModernApi: Boolean
         get() = modernRecipeClass != null
+
+    fun baseChoice(material: Material): RecipeChoice {
+        if (material != Material.POTION) {
+            return RecipeChoice.MaterialChoice(material)
+        }
+
+        if (modernRecipeClass == null) {
+            return LegacyBrewingRecipeRegistrar.vanillaPotionChoice()
+        }
+
+        return modernChoice(
+            ItemStack(Material.POTION),
+            Predicate { stack ->
+                BrewBaseMatcher.matches(Material.POTION, stack)
+            }
+        )
+    }
 
     fun customChoice(custom: CustomItem): RecipeChoice {
         if (modernRecipeClass == null) return LegacyBrewingRecipeRegistrar.customChoice(custom)
